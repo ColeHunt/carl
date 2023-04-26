@@ -2,6 +2,13 @@ import socket
 import struct
 import threading
 
+# Set Flag for Robot system Enable
+ENABLED = True
+
+CMD = 0
+CONTROL = 1
+
+DEADZONE = 0.05
 class OI:
 
     def __init__(self):
@@ -10,7 +17,7 @@ class OI:
         self.LJoystickYAxisRaw = 0
         self.AButtonRaw = 0
         self.BButtonRaw = 0
-        self.data = 0
+        self.Enabled = False
 
     def threadRoutine(self):
         # Define the IP address and port number to listen on
@@ -33,19 +40,34 @@ class OI:
             # Receive data
             dataRaw = conn.recv(1024)
             data = bytearray(dataRaw)
-            self.LJoystickXAxisRaw = data[0]
-            self.LJoystickYAxisRaw = data[1]
-            self.AButtonRaw = data[2]
-            self.BButtonRaw = data[3]
+
+            if (data[0] == CMD):
+                self.Enabled = data[1]
+
+            if (data[1] == CONTROL):
+                self.LJoystickXAxisRaw = data[1]
+                self.LJoystickYAxisRaw = data[2]
+                self.AButtonRaw = data[3]
+                self.BButtonRaw = data[4]
+
 
         # Close the connection
         conn.close()
 
+    def isEnabled(self):
+        return self.Enabled
+
     def getLeftJoystickXAxis(self):
-        return ((self.LJoystickXAxisRaw - 127.0) / 127.0)
+        if self.LJoystickXAxisRaw > DEADZONE:
+            return ((self.LJoystickXAxisRaw - 127.0) / 127.0)
+        else:
+            return 0
 
     def getLeftJoystickYAxis(self):
-        return ((self.LJoystickYAxisRaw - 127.0) / 127.0)
+        if self.LJoystickYAxisRaw > DEADZONE:
+            return ((self.LJoystickYAxisRaw - 127.0) / 127.0)
+        else:
+            return 0
 
     def getAButtonPressed(self):
         return self.AButtonRaw

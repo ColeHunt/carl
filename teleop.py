@@ -15,12 +15,10 @@ from flipperControl import FlipperControl
 from operatorInterface import OI
 import time
 
-ENABLED = True
-
 def main():
 
     # Create Operatior Interface object
-    oi = OI()
+    oiObj = OI()
 
     #Instantiate SparkBus object
     bus = SparkCAN.SparkBus(channel="can0", bustype='socketcan', bitrate=1000000)
@@ -28,11 +26,12 @@ def main():
     driveTrainObj = DriveTrain(bus)
     #flipperControlObj = FlipperControl(bus)
 
-    steering = 0
-    speed = 0
+    while True:
+        if(oiObj.isEnabled):
+            controlLoop(driveTrainObj, oiObj)
 
-    while(ENABLED):
-        driveTrainObj.arcadeDrive(oi.getLeftJoystickXAxis(), oi.getLeftJoystickYAxis())
+def controlLoop(oiObj, driveTrainObj):
+    driveTrainObj.arcadeDrive(oiObj.getLeftJoystickXAxis(), oiObj.getLeftJoystickYAxis())
 
 if __name__ == "__main__":
     main()
