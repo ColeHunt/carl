@@ -2,7 +2,7 @@ FROM alpine:latest AS run-env
 
 WORKDIR /home
 
-COPY * .
+COPY * ./
 
 RUN apk update && \
     apk add git && \
@@ -13,13 +13,13 @@ RUN apk update && \
     apk add linux-headers && \
     apk add jpeg-dev
 
+
 RUN git clone https://github.com/jacksonliam/mjpg-streamer.git
-
 WORKDIR /home/mjpg-streamer/mjpg-streamer-experimental
-
 RUN make
 RUN make install
 
 WORKDIR /home
 
-ENTRYPOINT [ "CameraStream.sh" ]
+RUN chmod +x ./CameraStream.sh
+ENTRYPOINT [ "./CameraStream.sh" ]
