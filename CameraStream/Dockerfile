@@ -20,4 +20,4 @@ RUN make install
 
 WORKDIR /home
 
-ENTRYPOINT [ mjpg_streamer -i "input_uvc.so -d /dev/video0" -o "output_http.so -w ./www" ]
+ENTRYPOINT [ mjpg_streamer, "-i 'input_uvc.so -d /dev/video0'", "-o 'output_http.so -w ./www'" ]
