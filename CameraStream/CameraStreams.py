@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 """
 Camera.py
 
@@ -44,6 +46,7 @@ class CameraStreams:
         self.container = None
         self.keep_alive_thread = None
         self.image = self._get_image()
+        print(self.image)
 
     
     def _get_image(self, build_if_needed : bool = True) -> docker.models.images.Image:
@@ -65,8 +68,8 @@ class CameraStreams:
         """
         Return the builds the Docker image.
         """
-        return self.client.images.build(path="TODO", 
-                                        dockerfile=self.docker_path, 
+        return self.client.images.build(path=self.docker_path, 
+                                        dockerfile="Dockerfile", 
                                         quiet=False, 
                                         rm=True,
                                         tag=self.image_name)
@@ -101,6 +104,7 @@ class CameraStreams:
         """
         TODO
         """
+        os.system("ls -ld /dev/v4l/by-id/* | tr -s \" \" | awk -F ' ' '{print $9,$11}'")
         return ["/dev/video0", "/dev/video1"]
 
     def _keep_stream_alive(self, container : docker.models.containers.Container) -> None:
@@ -130,6 +134,7 @@ class CameraStreams:
 
 if __name__ == "__main__":
     cameras = CameraStreams()
+    cameras.get_cameras()
     #cameras.startup()
     #cameras.shutdown()
     cameras.prune_containers()
