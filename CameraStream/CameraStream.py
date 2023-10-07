@@ -14,8 +14,6 @@ import os
 import threading
 import subprocess
 
-# ['/dev/v4l/by-id/usb-H264_USB_Camera_H264_USB_Camera_2020032801-video-index0 ../../video0', '/dev/v4l/by-id/usb-H264_USB_Camera_H264_USB_Camera_2020032801-video-index1 ../../video1', '/dev/v4l/by-id/usb-H264_USB_Camera_H264_USB_Camera_2020032801-video-index2 ../../video2', '/dev/v4l/by-id/usb-H264_USB_Camera_H264_USB_Camera_2020032801-video-index3 ../../video3']
-
 # Which port should be used for each camera.
 # The key is the camera ID and the value is the port to stream from.
 # To find the camera ID run "ls -l /dev/v4l/by-id/"
