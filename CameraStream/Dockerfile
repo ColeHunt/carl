@@ -2,9 +2,6 @@ FROM alpine:latest AS run-env
 
 WORKDIR /home
 
-# Copy CameraStream.sh to the home directory of the container
-COPY CameraStream.sh ./
-
 # Install all the dependencies for mjpg-streamer
 RUN apk update && \
     apk add git && \
@@ -23,6 +20,4 @@ RUN make install
 
 WORKDIR /home
 
-# Run the camera stream script
-RUN chmod +x ./CameraStream.sh
-ENTRYPOINT [ "./CameraStream.sh" ]
+ENTRYPOINT [ "/bin/sh", "-c", "mjpg_streamer -i \"input_uvc.so -d /dev/video0\" -o \"output_http.so -p 5000\"" ]
