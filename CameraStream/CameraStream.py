@@ -3,7 +3,7 @@
 """
 Camera.py
 
-Desc: Connection to the camera streaming containers
+Desc: Hosting of camera streams via docker containers
 Author: Isaac Denning
 Date: 10/03/23
 
@@ -13,17 +13,17 @@ import docker
 import os
 import threading
 import subprocess
+import random
+import string
 
 # Which port should be used for each camera.
-# The key is the camera ID and the value is the port to stream from.
 # To find the camera ID run "ls -l /dev/v4l/by-id/"
 DEFAULT_STREAM_PORTS = [
     {
         "Cam_UUID": "/dev/v4l/by-id/usb-H264_USB_Camera_H264_USB_Camera_2020032801-video-index0",
-        "Port": 5000
+        "Port": 80
     }
 ]
-
 DEFAULT_IMAGE_NAME = "cysar_camera_streamer"
 DEFAULT_DOCKER_PATH = os.path.dirname(__file__)
 
@@ -44,7 +44,6 @@ class CameraStream:
         self.docker_path = docker_path
         self._client = docker.from_env()
         self._image = self._get_image()
-        self._containers = []
         self._host_threads = []
         self._run_threads = False
 
@@ -76,25 +75,38 @@ class CameraStream:
 
     def _host_stream(self, CameraID : str, port : int) -> None:
         """
-        TODO
+        Thread for hosting a stream for the given camera
+
+        Args:
+            CameraID (str): The ID of the camera to host
+            port (int): The port number to host the camera on
         """
         container = None
+        CONTAINER_ID_LEN = 10
+        containerID = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(CONTAINER_ID_LEN))
         while self._run_threads:
-            camera = [cam[1] for cam in self.get_cameras() if cam[0] == CameraID]
-            print(self.get_cameras(), CameraID)
-            if camera: # If the camera with ID exists
-                camera = camera[0] # Should only be one match anyways
-                self._client.containers.run(image=self._image.id,
-                                           detach=True,
-                                           devices=[camera+":/dev/video0:rwm"],
-                                           ports={'5000/tcp': port})
-                input("Wait a minute")
-            else:
-                pass
+            try:
+                camera = [cam[1] for cam in self.get_cameras() if cam[0] == CameraID]
+                if camera: # If the camera with ID exists
+                    camera = camera[0] # Should only be one match anyways
+                    if container is None:
+                        self._client.containers.run(name=containerID,
+                                                    image=self._image.id,
+                                                    detach=True,
+                                                    devices=[camera+":/dev/video0:rwm"],
+                                                    ports={'5000/tcp': port})
+                        container = self._client.containers.get(containerID)
+                else:
+                    if isinstance(container, docker.models.containers.Container):
+                        container.remove(force=True)
+                        container = None
+            except Exception as e: print(e)
+        if isinstance(container, docker.models.containers.Container):
+           container.remove()
 
     def startup(self) -> None:
         """
-        TODO
+        Starts threads for hosting the camera streams
         """
         self._run_threads = True
         for stream in self.stream_ports:
@@ -104,10 +116,11 @@ class CameraStream:
 
     def shutdown(self) -> None:
         """
-        Stop all the camera streams.
-        TODO
+        Stops all the camera streams.
         """
-        pass
+        self._run_threads = False
+        for thread in self._host_threads:
+           thread.join()
 
     def get_cameras(self) -> list:
         """
@@ -128,7 +141,7 @@ class CameraStream:
         cameras = [[cam[0], "/dev/v4l/by-id/"+cam[1]] for cam in cameras]
         return cameras
 
-    def prune_containers(self):
+    def prune_containers(self) -> None:
         """
         Removes all containers that were created via this image
         """
@@ -139,7 +152,7 @@ class CameraStream:
 
 if __name__ == "__main__":
     cameras = CameraStream()
-    cameras.get_cameras()
-    #cameras.startup()
-    #cameras.shutdown()
+    cameras.startup()
+    while not input("Shutdown (y/n):") == 'y': pass
+    cameras.shutdown()
     cameras.prune_containers()
