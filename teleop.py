@@ -32,7 +32,7 @@ def main():
     while(ENABLED):
         time.sleep(0.05)
         driveTrainObj.arcadeDrive(oi.getLeftJoystickXAxis(), oi.getLeftJoystickYAxis())
-        flipperControlObj.rotateSystemPercentOutput(oi.getLeftBumperPressed(), oi.getRightBumperPressed(), oi.getLeftTriggerPressed(), oi.getRightTriggerPressed(), oi.getRightJoystickYAxis())
+        flipperControlObj.rotateSystemPercentOutput(oi.getLeftBumperPressed(), oi.getRightBumperPressed(), oi.getLeftTriggerAxis(), oi.getRightTriggerAxis(), oi.getRightJoystickYAxis())
         if(oi.getStartButtonPressed()):
             flipperControlObj.returnSystemToHome()
 
