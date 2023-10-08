@@ -21,7 +21,11 @@ import string
 DEFAULT_STREAM_PORTS = [
     {
         "Cam_UUID": "/dev/v4l/by-id/usb-H264_USB_Camera_H264_USB_Camera_2020032801-video-index0",
-        "Port": 80
+        "Port": 8080
+    },
+    {
+        "Cam_UUID": "/dev/v4l/by-id/usb-HD_USB_Camera_HD_USB_Camera-video-index0",
+        "Port": 5000
     }
 ]
 DEFAULT_IMAGE_NAME = "cysar_camera_streamer"
@@ -102,7 +106,7 @@ class CameraStream:
                         container = None
             except Exception as e: print(e)
         if isinstance(container, docker.models.containers.Container):
-           container.remove()
+           container.remove(force=True)
 
     def startup(self) -> None:
         """
@@ -152,6 +156,7 @@ class CameraStream:
 
 if __name__ == "__main__":
     cameras = CameraStream()
+    cameras.prune_containers()
     cameras.startup()
     while not input("Shutdown (y/n):") == 'y': pass
     cameras.shutdown()
