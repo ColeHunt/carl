@@ -40,17 +40,7 @@ class Flipper:
     def getPosition(self):
         return self.controller.position
 
-    def inThreshold(self, update):
-        if(((self.getPosition() + update * FACTOR) > self.upper)
-           or ((self.getPosition() + update * FACTOR) < self.lower)):
-            return False
-        else:
-            return True
-
-    def rotateFlipperPosition(self, control):
-        if(self.inThreshold(control)):
-            self.controller.position_output(self.controller.postion + control * FACTOR)
-
+   
     # Will be deprecated once position control is implemented
     def rotateFlipperPercentOutput(self, control):
         if(control != 0):
@@ -60,7 +50,7 @@ class Flipper:
 
     # Will be deprecated once position control is implemented
     def hold(self):
-        self.controller.velocity_output(0)
+        self.controller.position_output(0)
 
 
 class FlipperControl:
