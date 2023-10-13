@@ -75,7 +75,7 @@ class FlipperControl:
         self.RLFlipper.setHome()
         self.RRFlipper.setHome()
 
-    def roateSystemPosition(self, fl, fr, rl, rr, update):
+    def rotateSystemPosition(self, fl, fr, rl, rr, update):
         self.FLFlipper.rotateFlipperPosition(fl * update)
         self.FRFlipper.rotateFlipperPosition(fr * update)
         self.RLFlipper.rotateFlipperPosition(rl * update)
