@@ -93,5 +93,12 @@ class FlipperControl:
         self.RLFlipper.setFlipperPosition(0)
         self.RRFlipper.setFlipperPosition(0)
 
+   # def hold(self, fl, fr, rl, rr): 
+        self.FLFlipper.setFlipperPosition(fl.getPosition())
+        self.FRFlipper.setFlipperPosition(fr)
+        self.RLFlipper.setFlipperPosition(rl)
+        self.RRFlipper.setFlipperPosition(rr)
+
+
     def getSystemPositions(self):
         print(f"FLF: {self.FLFlipper.getPosition()}, FRF: {self.FRFlipper.getPosition()}, RLR: {self.RLFlipper.getPosition()}, RRF: {self.RRFlipper.getPosition()}")
