@@ -110,6 +110,8 @@ class OI:
         return self.RightBumperRaw
 
     def getRightTriggerAxis(self):
+       # if (joystick.get_axis(5) > 0): 
+           # return self.getRightTriggerAxis
         value = ((self.RightTriggerAxisRaw - 127.0) / 127.0)
         if abs(value) > DEADZONE:
             return value
