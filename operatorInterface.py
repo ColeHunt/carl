@@ -110,14 +110,14 @@ class OI:
         return self.RightBumperRaw
 
     def getRightTriggerAxis(self):
-        value = ((self.RightTriggerAxisRaw - 127.0) / 127.0)
+        value = ((self.RightTriggerAxisRaw)
         if abs(value) > DEADZONE:
             return 1
         else:
             return 0        
 
     def getLeftTriggerAxis(self):
-        value = ((self.LeftTriggerAxisRaw - 127.0) / 127.0)
+        value = ((self.LeftTriggerAxisRaw)
         if abs(value) > DEADZONE:
             return 1
         else:
