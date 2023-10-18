@@ -41,7 +41,7 @@ class OI:
 
         while True:
             # Receive data
-            dataRaw = conn.recv(1024)
+            dataRaw = conn.recv(1664)
             data = bytearray(dataRaw)
             self.LJoystickXAxisRaw = data[0]
             self.LJoystickYAxisRaw = data[1]
