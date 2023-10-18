@@ -18,6 +18,8 @@ RRF = 24
 # Factor to scale Rotate Speed
 SCALE = 0.25
 
+INVERTED = -1
+
 # Factor to scale Rotate Position
 FACTOR = 1
 
@@ -96,10 +98,10 @@ class FlipperControl:
 
     # Will be deprecated once position control is implemented
     def rotateSystemPercentOutput(self, fl, fr, rl, rr, power):
-        self.FLFlipper.rotateFlipperPercentOutput(fl * power)
+        self.FLFlipper.rotateFlipperPercentOutput(fl * power * INVERTED)
         self.FRFlipper.rotateFlipperPercentOutput(fr * power)
         self.RLFlipper.rotateFlipperPercentOutput(rl * power)
-        self.RRFlipper.rotateFlipperPercentOutput(rr * power)
+        self.RRFlipper.rotateFlipperPercentOutput(rr * power * INVERTED)
 
     # Will be deprecated once position control is implemented
     def holdSystem(self):
