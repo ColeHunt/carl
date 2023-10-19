@@ -15,6 +15,10 @@ FRF = 22
 RLF = 23
 RRF = 24
 
+# Factor to scale Rotate Speed
+SCALE = 0.25
+
+INVERTED = -1
 # Factor to scale Rotate Position
 FACTOR = 1
 
@@ -46,9 +50,22 @@ class Flipper:
     def setFlipperPosition(self, position):
         self.controller.position_output(position)
 
+    #def rotateFlipperPosition(self, control):
+        #desired_position = self.getPosition() + control * FACTOR
+       # self.setFlipperPosition(desired_position)
+
     def rotateFlipperPosition(self, control):
-        desired_position = self.getPosition() + control * FACTOR
-        self.setFlipperPosition(desired_position)
+        if(self.inThreshold(control)):
+            self.controller.position_output(self.controller.postion + control * FACTOR)
+
+    def rotateFlipperPercentOutput(self, control):
+        if(control != 0):
+            self.controller.percent_output(control * SCALE)
+        else:
+            self.hold()
+            
+   def hold(self):
+        self.controller.position_output(self.getPosition())
 
 class FlipperControl:
 
@@ -87,18 +104,30 @@ class FlipperControl:
         self.RLFlipper.setFlipperPosition(rl)
         self.RRFlipper.setFlipperPosition(rr)
 
+    def rotateSystemPercentOutput(self, fl, fr, rl, rr, power):
+        self.FLFlipper.rotateFlipperPercentOutput(fl * power * INVERTED)
+        self.FRFlipper.rotateFlipperPercentOutput(fr * power)
+        self.RLFlipper.rotateFlipperPercentOutput(rl * power)
+        self.RRFlipper.rotateFlipperPercentOutput(rr * power * INVERTED)
+
+    #Hold method is the right method for what we want and disable method is uneeded
+    #def disable(self):
+        #self.FLFlipper.setFlipperPosition(0)
+        #self.FRFlipper.setFlipperPosition(0)
+        #self.RLFlipper.setFlipperPosition(0)
+        #self.RRFlipper.setFlipperPosition(0)
+
+   def holdPos(self):
+        self.FLFlipper.hold()
+        self.FRFlipper.hold()
+        self.RLFlipper.hold()
+        self.RRFlipper.hold()
+
     def disable(self):
-        self.FLFlipper.setFlipperPosition(0)
-        self.FRFlipper.setFlipperPosition(0)
-        self.RLFlipper.setFlipperPosition(0)
-        self.RRFlipper.setFlipperPosition(0)
-
-   # def hold(self, fl, fr, rl, rr): 
-        self.FLFlipper.setFlipperPosition(fl.getPosition())
-        self.FRFlipper.setFlipperPosition(fr)
-        self.RLFlipper.setFlipperPosition(rl)
-        self.RRFlipper.setFlipperPosition(rr)
-
+        self.FLFlipper.rotateFlipperPercentOutput(0)
+        self.FRFlipper.rotateFlipperPercentOutput(0)
+        self.RLFlipper.rotateFlipperPercentOutput(0)
+        self.RRFlipper.rotateFlipperPercentOutput(0)
 
     def getSystemPositions(self):
         print(f"FLF: {self.FLFlipper.getPosition()}, FRF: {self.FRFlipper.getPosition()}, RLR: {self.RLFlipper.getPosition()}, RRF: {self.RRFlipper.getPosition()}")
